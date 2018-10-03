@@ -59,7 +59,7 @@ def handleQuery(query):
             repo_list = get_repos()
             for repo in repo_list:
                 cleaned_query = str(input_query).replace('#', '').replace('!', '')
-                if cleaned_query in repo.html_url:
+                if cleaned_query in str(repo.html_url).lower():
                     repo_url = repo.html_url
                     if "!" in str(input_query): repo_url = repo_url + "/issues"
                     elif "#" in str(input_query): repo_url = repo_url + "/pulls"
