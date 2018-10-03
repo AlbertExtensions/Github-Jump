@@ -1,4 +1,8 @@
 import time
+from albertv0 import *
+from github import Github
+from os import path, environ
+from boltons import cacheutils
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Github Jump"
@@ -7,10 +11,6 @@ __trigger__ = "gj"
 __author__ = "Bharat kalluri"
 __dependencies__ = ["pygithub", "boltons"]
 
-from albertv0 import *
-from github import Github
-from os import path, environ
-from boltons import cacheutils
 
 icon_path = "{}/icons/{}.png".format(path.dirname(__file__), "repo")
 
