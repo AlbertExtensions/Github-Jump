@@ -1,12 +1,12 @@
 """Jump to github repos at light speed!"""
+import time
+
 import json
 import os
-import time
-from os import path
-from pathlib import Path
-
 from albertv0 import *
 from github import Github
+from os import path
+from pathlib import Path
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Github Jump"
@@ -70,16 +70,6 @@ def handleQuery(query):
 
     if query.isTriggered and query.string.strip():
 
-        # Require a token to start
-        try:
-            github_token = get_token()
-        except FileNotFoundError:
-            return Item(
-                id=__prettyname__,
-                icon=icon_path,
-                text="Token needed",
-                subtext="Please give a token by giving gj token [your token]")
-
         # avoid rate limiting
         time.sleep(0.3)
         if not query.isValid:
@@ -106,7 +96,18 @@ def handleQuery(query):
                 actions=[FuncAction(text="Save token",
                                     callable=lambda: save_token(gh_token))]
             )
-        elif list_safe_get(input_query_arr, 0) == 'cache' and list_safe_get(input_query_arr, 1) == 'refresh':
+
+        # Require a token to start
+        try:
+            github_token = get_token()
+        except FileNotFoundError:
+            return Item(
+                id=__prettyname__,
+                icon=icon_path,
+                text="Token needed",
+                subtext="Please give a token by giving gj token [your token]")
+
+        if list_safe_get(input_query_arr, 0) == 'cache' and list_safe_get(input_query_arr, 1) == 'refresh':
             print("Force refresh cache")
             return Item(
                 id=__prettyname__,
