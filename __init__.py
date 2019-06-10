@@ -4,6 +4,7 @@ import time
 import json
 import os
 from albertv0 import *
+from difflib import SequenceMatcher as SM
 from github import Github
 from os import path
 from pathlib import Path
@@ -118,23 +119,29 @@ def handleQuery(query):
                                     callable=lambda: get_repos(github_token, cache_override=True))]
             )
 
-        if len(query.string) >= 3:
+        if len(query.string) >= 1:
             repo_list = get_repos(github_token)
+            match_list = []
+            cleaned_query = str(input_query).replace('#', '').replace('!', '')
             for repo in repo_list:
-                cleaned_query = str(input_query).replace('#', '').replace('!', '')
-                if cleaned_query in str(repo['html_url']).lower():
-                    repo_url = repo['html_url']
-                    if "!" in str(input_query):
-                        repo_url = repo_url + "/issues"
-                    elif "#" in str(input_query):
-                        repo_url = repo_url + "/pulls"
-                    results.append(Item(
-                        id=__prettyname__,
-                        icon=icon_path,
-                        text=repo['name'],
-                        subtext=repo['description'] if repo['description'] else "",
-                        actions=[UrlAction("Open in Github", repo_url)])
-                    )
+                match_list.append([repo, SM(
+                    lambda x: x in [" ", "-"],
+                    cleaned_query, repo['name'].lower()).ratio()
+                                   ])
+            match_list.sort(key=lambda x: x[1], reverse=True)
+            for repo, ratio in match_list:
+                repo_url = repo['html_url']
+                if "!" in str(input_query):
+                    repo_url = repo_url + "/issues"
+                elif "#" in str(input_query):
+                    repo_url = repo_url + "/pulls"
+                results.append(Item(
+                    id=__prettyname__,
+                    icon=icon_path,
+                    text=repo['name'],
+                    subtext=repo['description'] if repo['description'] else "",
+                    actions=[UrlAction("Open in Github", repo_url)])
+                )
         else:
             item.subtext = "Jump to repo in Github! Enter more than 2 Characters to begin search."
             return item
