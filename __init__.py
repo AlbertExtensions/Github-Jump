@@ -3,7 +3,7 @@ import time
 
 import json
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 from albert import *
 from difflib import SequenceMatcher
 from github import Github
@@ -86,9 +86,9 @@ def get_search_results(input_query: str, github_token: str) -> List[Item]:
     results = []
     for repo_with_match_percentage in repos_with_match_percentage:
         repo = repo_with_match_percentage.get('repo_info')
-        repo_name = repo.get('name')
-        repo_url = repo.get("html_url")
-        repo_description = repo.get('description', '')
+        repo_name = repo.get('name', '')
+        repo_url = repo.get("html_url", '')
+        repo_description: Optional[str] = repo.get('description')
         if "!" in str(input_query):
             repo_url = repo_url + "/issues"
         elif "#" in str(input_query):
@@ -98,7 +98,7 @@ def get_search_results(input_query: str, github_token: str) -> List[Item]:
                 id=__title__,
                 icon=icon_path,
                 text=repo_name,
-                subtext=repo_description,
+                subtext=repo_description if repo_description else '',
                 actions=[UrlAction("Open in Github", repo_url)],
             )
         )
@@ -158,12 +158,13 @@ def handleQuery(query):
                 ],
             )
 
-        if len(query.string) >= 1:
-            return get_search_results(query.string, github_token)
-        else:
+        if not query.string.strip():
             return Item(
                 id=__title__,
                 icon=icon_path,
                 text="Github Jump",
                 subtext="Jump to repo in Github! Enter more than 2 Characters to begin search.",
             )
+
+        return get_search_results(query.string, github_token)
+
