@@ -114,6 +114,8 @@ def handleQuery(query):
         if not query.isValid:
             return
 
+        query.disableSort()
+
         input_query = query.string.strip()
         input_query_arr = input_query.split(" ")
 
