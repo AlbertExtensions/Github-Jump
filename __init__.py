@@ -11,10 +11,10 @@ from os import path
 from pathlib import Path
 
 __title__ = "Github Jump"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __triggers__ = "gj"
-__author__ = "Bharat kalluri"
-__py_deps__ = ["pygithub", "boltons"]
+__author__ = ["Bharat kalluri", "AirOnSkin"]
+__py_deps__ = ["github", "boltons"]
 
 from github.AuthenticatedUser import AuthenticatedUser
 from github.Repository import Repository
@@ -139,7 +139,7 @@ def handleQuery(query):
                 id=__title__,
                 icon=icon_path,
                 text="Token needed",
-                subtext="Please give a token by giving gj token [your token]",
+                subtext="Supply a personal access token with: gj token [your token]",
             )
 
         if (
